@@ -1493,7 +1493,7 @@ class BlackTestCase(BlackBaseTestCase):
             [
                 "--code=print('hello world')",
                 "--verbose",
-                f"--config={str(test_toml_file)}",
+                f"--config={test_toml_file!s}",
             ],
         )
 
@@ -1818,9 +1818,9 @@ class BlackTestCase(BlackBaseTestCase):
         result: click.testing.Result, expected_value: str, expected_exit_code: int
     ) -> None:
         """Helper method to test the value and exit code of a click Result."""
-        assert (
-            result.stdout == expected_value
-        ), "The output did not match the expected value."
+        assert result.stdout == expected_value, (
+            "The output did not match the expected value."
+        )
         assert result.exit_code == expected_exit_code, "The exit code is incorrect."
 
     def test_code_option(self) -> None:
@@ -1923,14 +1923,14 @@ class BlackTestCase(BlackBaseTestCase):
                 CliRunner().invoke(black.main, args)
                 pyproject_path = Path(Path.cwd(), "pyproject.toml").resolve()
 
-            assert (
-                len(parse.mock_calls) >= 1
-            ), "Expected config parse to be called with the current directory."
+            assert len(parse.mock_calls) >= 1, (
+                "Expected config parse to be called with the current directory."
+            )
 
             _, call_args, _ = parse.mock_calls[0]
-            assert (
-                call_args[0].lower() == str(pyproject_path).lower()
-            ), "Incorrect config loaded."
+            assert call_args[0].lower() == str(pyproject_path).lower(), (
+                "Incorrect config loaded."
+            )
 
     @pytest.mark.incompatible_with_mypyc
     def test_code_option_parent_config(self) -> None:
@@ -1943,14 +1943,14 @@ class BlackTestCase(BlackBaseTestCase):
                 CliRunner().invoke(black.main, args)
 
                 pyproject_path = Path(Path().cwd().parent, "pyproject.toml").resolve()
-                assert (
-                    len(parse.mock_calls) >= 1
-                ), "Expected config parse to be called with the current directory."
+                assert len(parse.mock_calls) >= 1, (
+                    "Expected config parse to be called with the current directory."
+                )
 
                 _, call_args, _ = parse.mock_calls[0]
-                assert (
-                    call_args[0].lower() == str(pyproject_path).lower()
-                ), "Incorrect config loaded."
+                assert call_args[0].lower() == str(pyproject_path).lower(), (
+                    "Incorrect config loaded."
+                )
 
     def test_for_handled_unexpected_eof_error(self) -> None:
         """
@@ -2209,7 +2209,7 @@ class TestCaching:
     @event_loop()
     def test_output_locking_when_writeback_diff(self, color: bool) -> None:
         with cache_dir() as workspace:
-            for tag in range(0, 4):
+            for tag in range(4):
                 src = (workspace / f"test{tag}.py").resolve()
                 src.write_text("print('hello')", encoding="utf-8")
             with patch(
@@ -2472,7 +2472,7 @@ class TestFileCollection:
         exclude = re.compile(r"")
         report = black.Report()
         gitignore = PathSpec.from_lines(
-            "gitwildmatch", ["exclude/", ".definitely_exclude"]
+            "gitignore", ["exclude/", ".definitely_exclude"]
         )
         sources: list[Path] = []
         expected = [
